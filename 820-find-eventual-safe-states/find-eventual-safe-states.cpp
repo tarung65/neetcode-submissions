@@ -1,36 +1,31 @@
 class Solution {
-    std::set<int>safe_nodes;
-    std::unordered_set<int> cyclic_nodes;
-    std::unordered_set<int>visited;
-    bool findCyclic_node_i(vector<vector<int>>& graph,int i){
-        if(safe_nodes.find(i) != safe_nodes.end())
-            return false;
-        if(cyclic_nodes.find(i) != cyclic_nodes.end()||visited.find(i) != visited.end()) return true;
-        visited.insert(i);
-        for(int j: graph[i]){
-            if(findCyclic_node_i(graph,j)){
-                cyclic_nodes.insert(j);
+    bool isCyclic(int i,vector<vector<int>>& graph,vector<short>&state){
+        if(state[i] !=0 )
+            return state[i]==1;
+        state[i] =1;
+        for(int j :graph[i] ){
+            if(isCyclic(j,graph,state)){
                 return true;
-            } else {
-                safe_nodes.insert(j);
             }
         }
+        state[i] = 2;
         return false;
-    }
-    void findsafe_node(vector<vector<int>>& graph){
-        for(int i =0;i<graph.size();i++){
-            visited.clear();
-            if(!findCyclic_node_i(graph,i))
-                safe_nodes.insert(i);
-        }
-        
     }
 public:
     vector<int> eventualSafeNodes(vector<vector<int>>& graph) {
-        findsafe_node(graph);
-        vector<int> result;
-        for(int i : safe_nodes)
-            result.push_back(i);
+        int n = graph.size();
+        vector<short>state(n,0);
+        vector<int>result;
+        for(int i =0;i<n;i++){
+            if(state[i] == 0){
+                isCyclic(i,graph,state);
+            }
+        }
+        for(int i =0;i<n;i++){
+            if(state[i] == 2){
+                result.push_back(i);
+            }
+        }
         return result;
     }
 };
