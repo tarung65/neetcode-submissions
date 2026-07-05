@@ -19,12 +19,12 @@ public:
         std::vector<int>minutes;
         for(auto s : timePoints)
             minutes.push_back(convertStringToMin(s));
+        std::sort(minutes.begin(), minutes.end());
         int min = max_difference;
         for(int i = 0;i<minutes.size()-1;i++){
-            for(int j = i+1;j<minutes.size();j++){
-                min = std::min(min,diffenceab(minutes[i],minutes[j]));
-            }
+            min = std::min(min,diffenceab(minutes[i],minutes[i+1]));
         }
+        min = std::min(min,diffenceab(minutes[0],minutes.back()));
         return min;
     }
 };
