@@ -9,13 +9,11 @@ public:
         for(auto route : routes){
             for(int stop  : route){
                 nodes[stop].insert(i);
-                bus_needed[stop] = INT_MAX;
             }
             i++;
         }
-        if(bus_needed.count(source) == 0 ||bus_needed.count(target) == 0 )
+        if(nodes.count(source) == 0 ||nodes.count(target) == 0 )
             return -1;
-        bus_needed[source] = 0;
         std::queue<int> q;
         for(auto route: nodes[source]){
             q.push(route);
@@ -28,24 +26,23 @@ public:
             int size = q.size();
             for(int j =0;j<size;j++){
                 int route = q.front();
-                route_visited.insert(route);
                 q.pop();
                 for(int stop : routes[route]){
                     if(visited.count(stop))
                         continue;
-                    bus_needed[stop] = i;
+                    if(stop == target) return i;
                     visited.insert(stop);
                     for(int r :nodes[stop]){
-                        if(!route_visited.count(r))
+                        if(!route_visited.count(r)){
                             q.push(r);
+                            route_visited.insert(route);
+                        }
                     }
                 }
 
             }
             i++;
         }
-        if(bus_needed[target] == INT_MAX)
-            return -1;
-        return bus_needed[target];
+        return -1;
     }
 };
