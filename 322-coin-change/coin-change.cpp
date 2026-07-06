@@ -1,27 +1,25 @@
 class Solution {
 public:
-    std::unordered_map<int,int> min_cost_map;
+    
 
-    void  find_min(vector<int>& coins, int amount){
-        int min_cost = INT_MAX;
+    void  find_min(vector<int>& coins, int amount, std::vector<int>& min_cost_map){
         for(int i : coins){
             int r = amount-i;
-            if(r>=0  && min_cost_map.count(r)){
-                min_cost = std::min(min_cost,1+min_cost_map[r]);
+            if(r>=0){
+                min_cost_map[amount] = std::min(min_cost_map[amount],1+min_cost_map[r]);
             }
         }
-        if(min_cost != INT_MAX)
-            min_cost_map[amount] = min_cost;
     }
     int coinChange(vector<int>& coins, int amount) {
+        std::vector<int> min_cost_map(amount+1,amount+1);
         sort(coins.begin(),coins.end());
         min_cost_map[0] = 0;
 
         for(int i =1;i<=amount;i++){
-            find_min(coins,i);
+            find_min(coins,i,min_cost_map);
         }
-        if(min_cost_map.count(amount))
-            return min_cost_map[amount];
-        return -1;
+        if(min_cost_map[amount] == amount+1)
+            return -1;
+        return min_cost_map[amount];
     }
 };
