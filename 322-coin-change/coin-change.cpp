@@ -5,9 +5,9 @@ public:
     void  find_min(vector<int>& coins, int amount, std::vector<int>& min_cost_map){
         for(int i : coins){
             int r = amount-i;
-            if(r>=0){
-                min_cost_map[amount] = std::min(min_cost_map[amount],1+min_cost_map[r]);
-            }
+            if (r < 0)
+                break; // Since coins are sorted, no subsequent coin will fit either!
+            min_cost_map[amount] = std::min(min_cost_map[amount],1+min_cost_map[r]);
         }
     }
     int coinChange(vector<int>& coins, int amount) {
