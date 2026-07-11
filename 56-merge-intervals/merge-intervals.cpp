@@ -1,29 +1,35 @@
+// This black magic unties C++ streams from C streams for maximum I/O speed
+auto init = []() {
+    ios_base::sync_with_stdio(false);
+    cin.tie(NULL);
+    return 0;
+}();
+
 class Solution {
 public:
     vector<vector<int>> merge(vector<vector<int>>& intervals) {
         if (intervals.empty()) return {};
 
-        // Speed Optimization 1: Custom lambda lambda sort. 
-        // Default sort compares the second element if the first elements match. 
-        // We only care about the start times, which speeds up the sorting process.
+        // 1. Sort strictly by the first element
         sort(intervals.begin(), intervals.end(), [](const vector<int>& a, const vector<int>& b) {
             return a[0] < b[0];
         });
 
         vector<vector<int>> result;
-        // Speed Optimization 2: Pre-allocate memory to avoid vector re-allocations
-        result.reserve(intervals.size()); 
+        result.reserve(intervals.size()); // Pre-allocates memory block
         
-        result.push_back(intervals[0]);
+        // 2. Move instead of copying the first element
+        result.push_back(std::move(intervals[0]));
 
-        // Speed Optimization 3: Use a range-based reference loop to avoid indexing overhead
-        for (const auto& interval : intervals) {
-            // If it overlaps, extend the boundary of the last interval
-            if (result.back()[1] >= interval[0]) {
-                result.back()[1] = max(result.back()[1], interval[1]);
+        for (size_t i = 1; i < intervals.size(); ++i) {
+            // Using a direct reference to avoid pointer chasing
+            auto& last = result.back();
+            
+            if (last[1] >= intervals[i][0]) {
+                last[1] = max(last[1], intervals[i][1]);
             } else {
-                // Otherwise, push it directly
-                result.push_back(interval);
+                // 3. std::move transfers the vector inner pointers instead of copying data
+                result.push_back(std::move(intervals[i]));
             }
         }
 
