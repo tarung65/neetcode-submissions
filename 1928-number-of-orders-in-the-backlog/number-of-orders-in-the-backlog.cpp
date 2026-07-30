@@ -5,7 +5,7 @@ class Solution {
     const int MOD = 1e9 + 7;
 public:
     int getNumberOfBacklogOrders(vector<vector<int>>& orders) {
-        for(auto o: orders){
+        for(auto& o: orders){
             if(o[2] == 0){ //buy order
                 while(!sellOrder.empty() && std::get<0>(sellOrder.top()) <= o[0] && o[1] > 0){
                     auto [price, amount, orderType] = sellOrder.top();
